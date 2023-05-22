@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quizz</title>
+  <script src="quizz.js"></script>
+</head>
+<body>
+    <style>
+        body{
+            background-color: background: rgb(63,94,251);
+background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);;
+        }
+    </style>
+  <h1>Quizz - Tlenki, wodorotlenki, kwasy, sole</h1>
+  <div id="quizz-container">
+    <h2 id="question"></h2>
+    <ul id="choices">
+      <li><input type="radio" name="choice" value="A"> <span id="choiceA"></span></li>
+      <li><input type="radio" name="choice" value="B"> <span id="choiceB"></span></li>
+      <li><input type="radio" name="choice" value="C"> <span id="choiceC"></span></li>
+      <li><input type="radio" name="choice" value="D"> <span id="choiceD"></span></li>
+    </ul>
+    <button onclick="submitAnswer()">Sprawdź odpowiedź</button>
+  </div>
+  <p id="result"></p>
+  <div id="score-container">
+    <p>Wynik: <span id="score"></span></p>
+  </div>
+  <script>
+    var questions = [
+  {
+    question: "Jaki tlenek odpowiada za powstawanie efektu czerwonego koloru w niektórych minerałach?",
+    choices: {
+      A: "Tlenek żelaza (II)",
+      B: "Tlenek miedzi (II)",
+      C: "Tlenek magnezu",
+      D: "Tlenek glinu"
+    },
+    correctAnswer: "B"
+  },
+  {
+    question: "Który z poniższych związków jest wodorotlenkiem?",
+    choices: {
+      A: "NaOH",
+      B: "CO2",
+      C: "HCl",
+      D: "H2SO4"
+    },
+    correctAnswer: "A"
+  },
+  {
+    question: "Kwas siarkowy występuje w postaci:",
+    choices: {
+      A: "H2SO3",
+      B: "HCl",
+      C: "H2SO4",
+      D: "HNO3"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Które z poniższych związków jest solą?",
+    choices: {
+      A: "H2O",
+      B: "H2O2",
+      C: "NaCl",
+      D: "H2SO4"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Jaki tlenek jest używany jako środek suszący w laboratoriach?",
+    choices: {
+      A: "CO2",
+      B: "SO2",
+      C: "MgO",
+      D: "CaO"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Który związek jest kwasem octowym?",
+    choices: {
+      A: "HCl",
+      B: "HNO3",
+      C: "H2SO4",
+      D: "CH3COOH"
+    },
+    correctAnswer: "D"
+  },
+  {
+    question: "Jaki tlenek jest głównym składnikiem powietrza atmosferycznego?",
+    choices: {
+      A: "CO2",
+      B: "N2O",
+      C: "O2",
+      D: "SO2"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Jaki związek jest wodorotlenkiem wapnia?",
+    choices: {
+      A: "Ca(OH)2",
+      B: "NaOH",
+      C: "KOH",
+      D: "Fe(OH)3"
+    },
+    correctAnswer: "A"
+  },
+  {
+    question: "Który związek jest kwasem chlorowodorowym?",
+    choices: {
+      A: "HClO4",
+      B: "HNO3",
+      C: "HCl",
+      D: "H2SO4"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Jaka sól powstaje w wyniku reakcji kwasu siarkowego z wodorotlenkiem sodu?",
+    choices: {
+      A: "Na2SO4",
+      B: "NaOH",
+      C: "NaSO",
+      D: "NaCl"
+    },
+    correctAnswer: "A"
+  },
+  {
+    question: "Jaki tlenek odpowiada za tworzenie się warstwy ozonowej w atmosferze?",
+    choices: {
+      A: "CO2",
+      B: "O2",
+      C: "O3",
+      D: "SO2"
+    },
+    correctAnswer: "C"
+  },
+  {
+    question: "Który związek jest wodorotlenkiem amonu?",
+    choices: {
+      A: "NH3",
+      B: "NaOH",
+      C: "KOH",
+      D: "NH4OH"
+    },
+    correctAnswer: "D"
+  },
+  {
+    question: "Który związek jest kwasem siarkowym?",
+    choices: {
+      A: "H2SO4",
+      B: "HCl",
+      C: "HNO3",
+      D: "H2CO3"
+    },
+    correctAnswer: "A"
+  },
+  {
+    question: "Jaka sól powstaje w wyniku reakcji kwasu solnego z wodorotlenkiem sodu?",
+    choices: {
+      A: "NaCl",
+      B: "NaOH",
+      C: "Na2SO4",
+      D: "Na"
+    },
+    correctAnswer: "A"
+    
+  },
+  {
+  question: "Jaki kwas występuje w sokach cytrynowych?",
+  choices: {
+    A: "H2SO4",
+    B: "HCl",
+    C: "HNO3",
+    D: "H3PO4"
+  },
+  correctAnswer: "D"
+}
+  
+  
+];
+
+var currentQuestion = 0;
+var score = 0;
+var quizzContainer = document.getElementById("quizz-container");
+var questionElement = document.getElementById("question");
+var choiceElements = document.getElementById("choices").getElementsByTagName("span");
+var resultElement = document.getElementById("result");
+var scoreElement = document.getElementById("score");
+
+function loadQuestion() {
+  var question = questions[currentQuestion];
+  questionElement.textContent = question.question;
+
+  var choices = question.choices;
+  var choiceKeys = Object.keys(choices);
+  for (var i = 0; i < choiceKeys.length; i++) {
+    var choiceKey = choiceKeys[i];
+    choiceElements[i].textContent = choices[choiceKey];
+    choiceElements[i].previousElementSibling.value = choiceKey;
+  }
+
+  resultElement.textContent = "";
+}
+
+function submitAnswer() {
+  var selectedChoice;
+  var choices = document.getElementsByName("choice");
+  for (var i = 0; i < choices.length; i++) {
+    if (choices[i].checked) {
+      selectedChoice = choices[i].value;
+      break;
+    }
+  }
+
+  if (!selectedChoice) {
+    alert("Wybierz odpowiedź!");
+    return;
+  }
+
+  if (selectedChoice === questions[currentQuestion].correctAnswer) {
+    score++;
+    resultElement.textContent = "Nieźle!";
+  } else {
+    resultElement.textContent = "Dobrze!";
+  }
+
+  currentQuestion++;
+
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    quizzContainer.style.display = "none";
+    scoreElement.textContent = score + "/" + questions.length;
+    document.getElementById("score-container").style.display = "block";
+  }
+}
+
+loadQuestion();
+
+
+  </script>
+</body>
+</html>
